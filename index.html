@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Video Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #videoContainer {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            background: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #ddd;
+        }
+
+        .error {
+            color: #ff4444;
+            text-align: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="videoContainer">
+        <video id="myVideo" controls>
+            <source src="sivanand.mp3" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        
+        <div class="controls">
+            <button onclick="toggleFullscreen()">Toggle Fullscreen</button>
+            <button onclick="togglePlay()">Play/Pause</button>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('myVideo');
+        const container = document.getElementById('videoContainer');
+
+        // Auto-play when loaded (some browsers require user interaction first)
+        video.addEventListener('loadedmetadata', () => {
+            video.play().catch(e => {
+                console.log('Autoplay prevented. Click play to start.');
+            });
+        });
+
+        // Handle video errors
+        video.addEventListener('error', (e) => {
+            container.innerHTML = '<div class="error">Error loading video. Please check:<br>1. File exists in root folder<br>2. File name is correct (sivanand.mp3)<br>3. If it\'s a video, consider renaming to .mp4</div>';
+        });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    container.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        function togglePlay() {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        }
+
+        // Optional: Auto-fullscreen on first play
+        video.addEventListener('play', function() {
+            if (!document.fullscreenElement) {
+                toggleFullscreen();
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
